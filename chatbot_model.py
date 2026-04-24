@@ -4,9 +4,9 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 
 #loading the dataset 
-with open('/Users/palakbaisla/Documents/Anzen_01/NLP/intents.json') as file:
+with open('intents.json') as file:
     data=json.load(file)
-   #the entire json file is loaded into data object  
+#the entire json file is loaded into data object  
 #we are taking 2 empty lists they are the below ones:
 patterns=[]
 tags=[]
@@ -26,4 +26,4 @@ model.fit(X, tags)
 #save model and vectorizer
 pickle.dump(model,open("model.pkl",'wb'))
 pickle.dump(vectorizer, open("vectorizer.pkl",'wb'))
-print(" Model and Vectorizer saved sucessfully!")
+print("Model and Vectorizer saved successfully!")
