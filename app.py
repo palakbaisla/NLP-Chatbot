@@ -2,6 +2,7 @@ import streamlit as st
 import json
 import pickle
 import random
+import os
 
 # Page configuration
 st.set_page_config(page_title="Greetbot", layout="centered", initial_sidebar_state="collapsed")
@@ -66,6 +67,32 @@ try:
     # Load dataset
     with open('intents.json') as file:
         data = json.load(file)
+
+    # Check if model files exist, if not, train the model
+    import os
+    if not os.path.exists('model.pkl') or not os.path.exists('vectorizer.pkl'):
+        st.info("🔄 Training model... Please wait.")
+        # Train model
+        from sklearn.feature_extraction.text import CountVectorizer
+        from sklearn.linear_model import LogisticRegression
+
+        patterns = []
+        tags = []
+        for intent in data['intents']:
+            for pattern in intent['patterns']:
+                patterns.append(pattern.lower())
+                tags.append(intent['tag'])
+
+        vectorizer = CountVectorizer()
+        X = vectorizer.fit_transform(patterns)
+        model = LogisticRegression()
+        model.fit(X, tags)
+
+        # Save model and vectorizer
+        pickle.dump(model, open("model.pkl", 'wb'))
+        pickle.dump(vectorizer, open("vectorizer.pkl", 'wb'))
+        st.success("✅ Model trained and saved!")
+
     # Load model and vectorizer
     model = pickle.load(open("model.pkl", 'rb'))
     vectorizer = pickle.load(open("vectorizer.pkl", 'rb'))
